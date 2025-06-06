@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Radio - WCVR CivRadio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1>WCVR CivRadio 90.7FM</h1>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="team.html">Our Team</a>
+        <a href="stream.html">Live Radio</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    <section class="page">
+      <h2>Listen Live</h2>
+      <p>Click play to listen to our live radio stream:</p>
+      <audio controls>
+        <source src="https://civradio.yoru.cafe/stream" type="audio/ogg">
+        Your browser does not support the audio element.
+      </audio>
+    </section>
+  </main>
+<footer class="footer">
+  © <span id="year"></span> WCVR CivRadio 90.7FM. All rights reserved. | Developed by Joseph Redman.
+</footer>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
