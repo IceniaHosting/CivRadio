@@ -25,17 +25,27 @@
     <section class="page">
       <h2>Listen Live</h2>
       <p>Click play to listen to our live radio stream:</p>
-      <audio controls>
+      <audio id="radioPlayer" controls>
         <source src="https://civradio.yoru.cafe/stream" type="audio/ogg">
         Your browser does not support the audio element.
       </audio>
+      <p id="errorMessage" style="color: red; display: none; margin-top: 1em;">
+        Sorry, but we are experiencing technical difficulties and the stream is over.
+      </p>
     </section>
   </main>
-<footer class="footer">
-  © <span id="year"></span> WCVR CivRadio 90.7FM. All rights reserved. | Developed by Joseph Redman.
-</footer>
+  <footer class="footer">
+    © <span id="year"></span> WCVR CivRadio 90.7FM. All rights reserved. | Developed by Joseph Redman.
+  </footer>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    const audio = document.getElementById('radioPlayer');
+    const errorMessage = document.getElementById('errorMessage');
+
+    audio.addEventListener('error', function () {
+      errorMessage.style.display = 'block';
+    });
   </script>
 </body>
 </html>
