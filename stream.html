@@ -21,60 +21,33 @@
       </div>
     </header>
   </center>
+
   <main class="container">
     <section class="page">
       <h2>Listen Live</h2>
-      <p id="streamMessage">Checking stream status...</p>
+      <p>Click play on one of the streams below to listen:</p>
 
-      <audio id="radioPlayer" controls style="display: none;">
-        <source id="audioSource" src="" type="audio/ogg">
+      <h3>Primary Stream</h3>
+      <audio controls>
+        <source src="https://civradio.yoru.cafe/stream" type="audio/ogg">
         Your browser does not support the audio element.
       </audio>
 
-      <p id="errorMessage" style="color: red; display: none; margin-top: 1em;">
-        Sorry, but we are experiencing technical difficulties and the stream is offline. Below fallback stream is maintained by HosayNotJoseph.
-      </p>
-
-      <audio id="fallbackPlayer" controls style="display: none;">
-        <source id="audioSourceFallback" src="" type="audio/ogg">
+      <h3 style="margin-top: 2em;">Fallback Stream</h3>
+      <p style="color: red;">If the main stream doesn’t work, try the fallback below maintained by HosayNotJoseph:</p>
+      <audio controls>
+        <source src="https://fallback.civradio.uk/stream" type="audio/ogg">
         Your browser does not support the audio element.
       </audio>
     </section>
   </main>
+
   <footer class="footer">
     © <span id="year"></span> WCVR CivRadio 90.7FM. All rights reserved. | Developed by Joseph Redman.
   </footer>
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
-
-    const audio = document.getElementById('radioPlayer');
-    const source = document.getElementById('audioSource');
-    const fallbackAudio = document.getElementById('fallbackPlayer');
-    const fallbackSource = document.getElementById('audioSourceFallback');
-    const errorMessage = document.getElementById('errorMessage');
-    const streamMessage = document.getElementById('streamMessage');
-
-    const streamURL = "https://civradio.yoru.cafe/stream";
-    const streamURLFallback = "https://fallback.civradio.uk/stream";
-
-    fetch(streamURL, { method: 'HEAD' }).then(response => {
-      const contentType = response.headers.get('Content-Type');
-      if (response.ok && contentType && contentType.startsWith('audio')) {
-        source.src = streamURL;
-        audio.load();
-        audio.style.display = 'block';
-        streamMessage.textContent = 'Click play to listen to our live radio stream:';
-      } else {
-        throw new Error("Main stream is not available.");
-      }
-    }).catch(() => {
-      errorMessage.style.display = 'block';
-      fallbackSource.src = streamURLFallback;
-      fallbackAudio.load();
-      fallbackAudio.style.display = 'block';
-      streamMessage.textContent = 'Fallback stream available below:';
-    });
   </script>
 </body>
 </html>
