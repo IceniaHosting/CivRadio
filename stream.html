@@ -1,76 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Live Radio - WCVR CivRadio</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="icon" type="image/png" href="CivRadioLOGO.png">
+  <link rel="stylesheet" href="styles.css"/>
+  <link rel="icon" type="image/png" href="CivRadioLOGO.png"/>
 </head>
 <body>
   <center>
-  <header class="header">
-    <div class="container">
-      <h1>WCVR CivRadio 90.7FM</h1>
-      <nav>
-        <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-        <a href="team.html">Our Team</a>
-        <a href="stream.html">Live Radio</a>
-      </nav>
-    </div>
-  </header>
+    <header class="header">
+      <div class="container">
+        <h1>WCVR CivRadio 90.7FM</h1>
+        <nav>
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="team.html">Our Team</a>
+          <a href="stream.html">Live Radio</a>
+        </nav>
+      </div>
+    </header>
   </center>
   <main class="container">
     <section class="page">
       <h2>Listen Live</h2>
       <p id="streamMessage">Checking stream status...</p>
+
       <audio id="radioPlayer" controls style="display: none;">
         <source id="audioSource" src="" type="audio/ogg">
         Your browser does not support the audio element.
       </audio>
+
       <p id="errorMessage" style="color: red; display: none; margin-top: 1em;">
-        Sorry, but we are experiencing technical difficulties and the stream is offline.
+        Sorry, but we are experiencing technical difficulties and the stream is offline. Playing fallback stream.
       </p>
-      <p id="fallbackMessage" style="display: none; margin-top: 1em;">
-        There may be a fallback stream available, hosted by HosayNotJoseph.
-        <br>
-        <a href="https://fallback.civradio.uk/stream" target="_blank" style="color: blue; text-decoration: underline;">
-          Click here to listen.
-        </a>
-      </p>
+
+      <audio id="fallbackPlayer" controls style="display: none;">
+        <source id="audioSourceFallback" src="" type="audio/ogg">
+        Your browser does not support the audio element.
+      </audio>
     </section>
   </main>
   <footer class="footer">
     © <span id="year"></span> WCVR CivRadio 90.7FM. All rights reserved. | Developed by Joseph Redman.
   </footer>
+
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
     const audio = document.getElementById('radioPlayer');
     const source = document.getElementById('audioSource');
+    const fallbackAudio = document.getElementById('fallbackPlayer');
+    const fallbackSource = document.getElementById('audioSourceFallback');
     const errorMessage = document.getElementById('errorMessage');
-    const fallbackMessage = document.getElementById('fallbackMessage');
     const streamMessage = document.getElementById('streamMessage');
-    const streamURL = "https://civradio.yoru.cafe/stream";
 
-    fetch(streamURL, { method: 'HEAD' })
-      .then(response => {
-        const contentType = response.headers.get('Content-Type');
-        if (response.ok && contentType && contentType.startsWith('audio')) {
-          source.src = streamURL;
-          audio.load();
-          audio.style.display = 'block';
-          streamMessage.textContent = 'Click play to listen to our live radio stream:';
-        } else {
-          throw new Error("Stream unavailable or not audio.");
-        }
-      })
-      .catch(() => {
-        errorMessage.style.display = 'block';
-        fallbackMessage.style.display = 'block';
-        streamMessage.textContent = '';
-      });
+    const streamURL = "https://civradio.yoru.cafe/stream";
+    const streamURLFallback = "https://fallback.civradio.uk/stream";
+
+    fetch(streamURL, { method: 'HEAD' }).then(response => {
+      const contentType = response.headers.get('Content-Type');
+      if (response.ok && contentType && contentType.startsWith('audio')) {
+        source.src = streamURL;
+        audio.load();
+        audio.style.display = 'block';
+        streamMessage.textContent = 'Click play to listen to our live radio stream:';
+      } else {
+        throw new Error("Main stream is not available.");
+      }
+    }).catch(() => {
+      errorMessage.style.display = 'block';
+      fallbackSource.src = streamURLFallback;
+      fallbackAudio.load();
+      fallbackAudio.style.display = 'block';
+      streamMessage.textContent = 'Fallback stream available below:';
+    });
   </script>
 </body>
 </html>
