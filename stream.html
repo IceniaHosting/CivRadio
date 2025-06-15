@@ -26,11 +26,13 @@
     <section class="page">
       <h2>Listen Live</h2>
       <p>Click play on one of the streams below to listen:</p>
+      <p style="color: #ff0000;">If playback disconnects, it <i>should</i> reconnect automatically</p>
+
 
       <h3>CivRadio 1</h3>
       <p>Various music.</p>
       <p>NOW PLAYING: <span id="nowPlaying1">Loading...</span></p>
-      <audio controls>
+      <audio id="radio1" controls data-src="https://civradio.yoru.cafe/stream">
         <source src="https://civradio.yoru.cafe/stream" type="audio/ogg">
         Your browser does not support the audio element.
       </audio>
@@ -38,7 +40,7 @@
       <h3 style="margin-top: 2em;">CivRadio 2</h3>
       <p>Various music and shows.</p>
       <p>NOW PLAYING: <span id="nowPlaying2">Loading...</span></p>
-      <audio controls>
+      <audio id="radio2" controls data-src="https://501c1be520618b52b9a7767e504d30f7.serveo.net/stream">
         <source src="https://501c1be520618b52b9a7767e504d30f7.serveo.net/stream" type="audio/ogg">
         Your browser does not support the audio element.
       </audio>
@@ -59,7 +61,6 @@
         const parser = new DOMParser();
         const doc = parser.parseFromString(htmlText, "text/html");
 
-        // Find the <td> element with exact text "Currently playing:"
         const tdElements = Array.from(doc.querySelectorAll('td'));
         const currentPlayingTd = tdElements.find(td => td.textContent.trim() === 'Currently playing:');
         if (!currentPlayingTd) {
@@ -67,7 +68,6 @@
           return;
         }
 
-        // The next sibling <td> contains the song name
         const songTd = currentPlayingTd.nextElementSibling;
         if (!songTd) {
           document.getElementById(elementId).textContent = 'No song info found';
@@ -90,6 +90,30 @@
     setInterval(fetchAllNowPlaying, 10000);
 
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    function setupAutoReconnect(audioElement) {
+      const originalSrc = audioElement.getAttribute('data-src');
+
+      function reconnect() {
+        console.warn(`Reconnecting ${audioElement.id}...`);
+        const isPlaying = !audioElement.paused;
+        const newSrc = originalSrc + '?t=' + Date.now();
+
+        // Replace source and reload
+        audioElement.innerHTML = `<source src="${newSrc}" type="audio/ogg">`;
+        audioElement.load();
+
+        if (isPlaying) {
+          audioElement.play().catch(err => console.warn("Playback retry failed:", err));
+        }
+      }
+
+      audioElement.addEventListener('error', reconnect);
+      audioElement.addEventListener('ended', reconnect);
+    }
+
+    setupAutoReconnect(document.getElementById('radio1'));
+    setupAutoReconnect(document.getElementById('radio2'));
   </script>
 </body>
 </html>
