@@ -27,14 +27,17 @@
       <h2>Listen Live</h2>
       <p>Click play on one of the streams below to listen:</p>
 
-      <h3>Primary Stream</h3>
+      <h3>CivRadio 1</h3>
+      <p>Various music.</p>
+      <p>NOW PLAYING: <span id="nowPlaying1">Loading...</span></p>
       <audio controls>
         <source src="https://civradio.yoru.cafe/stream" type="audio/ogg">
         Your browser does not support the audio element.
       </audio>
 
-      <h3 style="margin-top: 2em;">Fallback Stream</h3>
-      <p style="color: red;">If the main stream doesn’t work, try the fallback below maintained by HosayNotJoseph:</p>
+      <h3 style="margin-top: 2em;">CivRadio 2</h3>
+      <p>Various music and shows.</p>
+      <p>NOW PLAYING: <span id="nowPlaying2">Loading...</span></p>
       <audio controls>
         <source src="https://501c1be520618b52b9a7767e504d30f7.serveo.net/stream" type="audio/ogg">
         Your browser does not support the audio element.
@@ -47,6 +50,45 @@
   </footer>
 
   <script>
+    async function fetchNowPlayingFromHTML(url, elementId) {
+      try {
+        const response = await fetch(url, {cache: "no-store"});
+        if (!response.ok) throw new Error('Network response was not ok');
+
+        const htmlText = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlText, "text/html");
+
+        // Find the <td> element with exact text "Currently playing:"
+        const tdElements = Array.from(doc.querySelectorAll('td'));
+        const currentPlayingTd = tdElements.find(td => td.textContent.trim() === 'Currently playing:');
+        if (!currentPlayingTd) {
+          document.getElementById(elementId).textContent = 'No song info found';
+          return;
+        }
+
+        // The next sibling <td> contains the song name
+        const songTd = currentPlayingTd.nextElementSibling;
+        if (!songTd) {
+          document.getElementById(elementId).textContent = 'No song info found';
+          return;
+        }
+
+        document.getElementById(elementId).textContent = songTd.textContent.trim();
+      } catch (error) {
+        console.error(`Failed to fetch now playing from ${url}:`, error);
+        document.getElementById(elementId).textContent = 'Error loading song';
+      }
+    }
+
+    function fetchAllNowPlaying() {
+      fetchNowPlayingFromHTML('https://civradio.yoru.cafe/status.xsl', 'nowPlaying1');
+      fetchNowPlayingFromHTML('https://501c1be520618b52b9a7767e504d30f7.serveo.net/status.xsl', 'nowPlaying2');
+    }
+
+    fetchAllNowPlaying();
+    setInterval(fetchAllNowPlaying, 10000);
+
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </body>
