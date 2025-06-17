@@ -42,8 +42,8 @@
       <p>Various music and shows.</p>
       <p>NOW PLAYING:</p>
       <div id="nowPlaying2">Loading...</div>
-      <audio id="radio2" controls data-src="https://cb4dc36615c2d1a822458c1f3f0b45e8.serveo.net/stream">
-        <source src="https://cb4dc36615c2d1a822458c1f3f0b45e8.serveo.net/stream" type="audio/ogg">
+      <audio id="radio2" controls data-src="https://fd00-51-179-206-10.ngrok-free.app/stream">
+        <source src="https://fd00-51-179-206-10.ngrok-free.app/stream" type="audio/ogg">
         Your browser does not support the audio element.
       </audio>
     </section>
@@ -92,7 +92,7 @@
 
     function fetchAllNowPlaying() {
       fetchNowPlayingFromHTML('https://civradio.yoru.cafe/status.xsl', 'nowPlaying1');
-      fetchNowPlayingFromHTML('https://cb4dc36615c2d1a822458c1f3f0b45e8.serveo.net/status.xsl', 'nowPlaying2');
+      fetchNowPlayingFromHTML('https://fd00-51-179-206-10.ngrok-free.app/status.xsl', 'nowPlaying2');
     }
 
     fetchAllNowPlaying();
