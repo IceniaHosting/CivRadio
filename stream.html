@@ -26,13 +26,18 @@
     <section class="page">
       <h2>Listen Live</h2>
       <p>Click play on the stream below to listen:</p>
-      <p style="color: #ff0000;">The now playing only updates when not being automated</p>
 
       <h3 style="margin-top: 2em;">CivRadio</h3>
       <p>Various music and shows.</p>
-      <div class="cstrEmbed" data-type="newStreamPlayer" data-publicToken="df5febbb-ddd1-4518-a88c-f89f03d4e52b" data-theme="light" data-color="6C2BDD" data-channelId="" data-rendered="false">
-      <a href="https://www.caster.fm">Shoutcast Hosting</a> <a href="https://www.caster.fm">Stream Hosting</a> <a href="https://www.caster.fm">Radio Server Hosting</a></div>
-      <script src="//cdn.cloud.caster.fm//widgets/embed.js"></script>
+
+      <!-- <audio controls autoplay>
+  <source src="https://good-hotels-raise.loca.lt/listen/civradio/radio.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio> -->
+      <audio controls autoplay>
+  <source src="https://good-hotels-raise.loca.lt/listen/civradio/radio.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
     </section>
   </main>
 
@@ -41,75 +46,8 @@
   </footer>
 
   <script>
-    async function fetchNowPlayingFromHTML(url, elementId) {
-      try {
-        const response = await fetch(url, {cache: "no-store"});
-        if (!response.ok) throw new Error('Network response was not ok');
-
-        const htmlText = await response.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlText, "text/html");
-
-        const tdElements = Array.from(doc.querySelectorAll('td'));
-        const currentPlayingTd = tdElements.find(td => td.textContent.trim() === 'Currently playing:');
-        if (!currentPlayingTd) {
-          document.getElementById(elementId).textContent = 'No song info found';
-          return;
-        }
-
-        const songTd = currentPlayingTd.nextElementSibling;
-        if (!songTd) {
-          document.getElementById(elementId).textContent = 'No song info found';
-          return;
-        }
-
-        // Use innerHTML to allow embedded HTML and strip outer <p> if necessary
-        let rawHTML = songTd.innerHTML.trim();
-        if (rawHTML.startsWith("<p") && rawHTML.endsWith("</p>")) {
-          const tempDiv = document.createElement('div');
-          tempDiv.innerHTML = rawHTML;
-          rawHTML = tempDiv.firstElementChild.innerHTML;
-        }
-        document.getElementById(elementId).innerHTML = rawHTML;
-      } catch (error) {
-        console.error(`Failed to fetch now playing from ${url}:`, error);
-        document.getElementById(elementId).textContent = 'Error loading song';
-      }
-    }
-
-    function fetchAllNowPlaying() {
-      fetchNowPlayingFromHTML('https://civradio.yoru.cafe/status.xsl', 'nowPlaying1');
-      fetchNowPlayingFromHTML('https://sapircast.caster.fm:18181/QQaFu/status.xsl', 'nowPlaying2');
-    }
-
-    fetchAllNowPlaying();
-    setInterval(fetchAllNowPlaying, 10000);
-
+    // Optional: automatically update year
     document.getElementById('year').textContent = new Date().getFullYear();
-
-    function setupAutoReconnect(audioElement) {
-      const originalSrc = audioElement.getAttribute('data-src');
-
-      function reconnect() {
-        console.warn(`Reconnecting ${audioElement.id}...`);
-        const isPlaying = !audioElement.paused;
-        const newSrc = originalSrc + '?t=' + Date.now();
-
-        // Replace source and reload
-        audioElement.innerHTML = `<source src="${newSrc}" type="audio/ogg">`;
-        audioElement.load();
-
-        if (isPlaying) {
-          audioElement.play().catch(err => console.warn("Playback retry failed:", err));
-        }
-      }
-
-      audioElement.addEventListener('error', reconnect);
-      audioElement.addEventListener('ended', reconnect);
-    }
-
-    setupAutoReconnect(document.getElementById('radio1'));
-    setupAutoReconnect(document.getElementById('radio2'));
   </script>
 </body>
 </html>
