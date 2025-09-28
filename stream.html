@@ -30,41 +30,34 @@
       <h3 style="margin-top: 2em;">CivRadio</h3>
       <p>Various music and shows.</p>
 
-      <!-- 
+      <!-- Audio tag with bypass JS -->
+      <audio id="civradio-player" controls autoplay></audio>
+
 <script>
+const audio = document.getElementById("civradio-player");
 const streamUrl = "https://civradio.loca.lt/listen/civradio/radio.mp3";
 fetch(streamUrl, {
   headers: { "Bypass-Tunnel-Reminder": "1" }
 })
 .then(response => response.blob())
 .then(blob => {
-  const url = URL.createObjectURL(blob);
-  const audio = document.createElement("audio");
-  audio.controls = true;
-  audio.autoplay = true;
-  audio.src = url;
-  document.querySelector("section.page").appendChild(audio);
+  audio.src = URL.createObjectURL(blob);
 })
 .catch(err => console.error("Failed to load stream:", err));
 </script>
- -->
-      
-<script>
-const streamUrl = "https://civradio.loca.lt/listen/civradio/radio.mp3";
-fetch(streamUrl, {
-  headers: { "Bypass-Tunnel-Reminder": "1" }
-})
-.then(response => response.blob())
-.then(blob => {
-  const url = URL.createObjectURL(blob);
-  const audio = document.createElement("audio");
-  audio.controls = true;
-  audio.autoplay = true;
-  audio.src = url;
-  document.querySelector("section.page").appendChild(audio);
-})
-.catch(err => console.error("Failed to load stream:", err));
-</script>
+
+      <script>
+      const audio = document.getElementById("civradio-player");
+      const streamUrl = "https://placeholder.loca.lt/listen/civradio/radio.mp3"; // Python script will update this
+      fetch(streamUrl, {
+        headers: { "Bypass-Tunnel-Reminder": "1" }
+      })
+      .then(response => response.blob())
+      .then(blob => {
+        audio.src = URL.createObjectURL(blob);
+      })
+      .catch(err => console.error("Failed to load stream:", err));
+      </script>
 
     </section>
   </main>
@@ -74,8 +67,9 @@ fetch(streamUrl, {
   </footer>
 
   <script>
-    // Optional: automatically update year
-    document.getElementById('year').textContent = new Date().getFullYear();
+    // Set current year in footer
+    document.getElementById("year").textContent = new Date().getFullYear();
   </script>
+
 </body>
 </html>
