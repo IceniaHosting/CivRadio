@@ -30,14 +30,42 @@
       <h3 style="margin-top: 2em;">CivRadio</h3>
       <p>Various music and shows.</p>
 
-      <!-- <audio controls autoplay>
-  <source src="https://shy-games-sniff.loca.lt/listen/civradio/radio.mp3" type="audio/mpeg">
-  Your browser does not support the audio element.
-</audio> -->
-      <audio controls autoplay>
-  <source src="https://shy-games-sniff.loca.lt/listen/civradio/radio.mp3" type="audio/mpeg">
-  Your browser does not support the audio element.
-</audio>
+      <!-- 
+<script>
+const streamUrl = "https://civradio.loca.lt/listen/civradio/radio.mp3";
+fetch(streamUrl, {
+  headers: { "Bypass-Tunnel-Reminder": "1" }
+})
+.then(response => response.blob())
+.then(blob => {
+  const url = URL.createObjectURL(blob);
+  const audio = document.createElement("audio");
+  audio.controls = true;
+  audio.autoplay = true;
+  audio.src = url;
+  document.querySelector("section.page").appendChild(audio);
+})
+.catch(err => console.error("Failed to load stream:", err));
+</script>
+ -->
+      
+<script>
+const streamUrl = "https://civradio.loca.lt/listen/civradio/radio.mp3";
+fetch(streamUrl, {
+  headers: { "Bypass-Tunnel-Reminder": "1" }
+})
+.then(response => response.blob())
+.then(blob => {
+  const url = URL.createObjectURL(blob);
+  const audio = document.createElement("audio");
+  audio.controls = true;
+  audio.autoplay = true;
+  audio.src = url;
+  document.querySelector("section.page").appendChild(audio);
+})
+.catch(err => console.error("Failed to load stream:", err));
+</script>
+
     </section>
   </main>
 
