@@ -30,35 +30,12 @@
       <h3 style="margin-top: 2em;">CivRadio</h3>
       <p>Various music and shows.</p>
 
-      <!-- Audio tag with bypass JS -->
-      <audio id="civradio-player" controls autoplay></audio>
-
-<script>
-const audio = document.getElementById("civradio-player");
-const streamUrl = "https://civradio.loca.lt/listen/civradio/radio.mp3";
-fetch(streamUrl, {
-  headers: { "Bypass-Tunnel-Reminder": "1" }
-})
-.then(response => response.blob())
-.then(blob => {
-  audio.src = URL.createObjectURL(blob);
-})
-.catch(err => console.error("Failed to load stream:", err));
-</script>
-
-      <script>
-      const audio = document.getElementById("civradio-player");
-      const streamUrl = "https://placeholder.loca.lt/listen/civradio/radio.mp3"; // Python script will update this
-      fetch(streamUrl, {
-        headers: { "Bypass-Tunnel-Reminder": "1" }
-      })
-      .then(response => response.blob())
-      .then(blob => {
-        audio.src = URL.createObjectURL(blob);
-      })
-      .catch(err => console.error("Failed to load stream:", err));
-      </script>
-
+      <!-- Direct audio stream using fixed LocalTunnel subdomain -->
+      <audio id="civradio-player" controls autoplay>
+        <source src="https://civradio.loca.lt/listen/civradio/radio.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+      
     </section>
   </main>
 
