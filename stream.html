@@ -6,6 +6,34 @@
   <title>Live Radio - WCVR CivRadio</title>
   <link rel="stylesheet" href="styles.css"/>
   <link rel="icon" type="image/png" href="CivRadioLOGO.png"/>
+  <style>
+    .chat {
+      margin-top: 2em;
+      border: 1px solid #ccc;
+      padding: 1em;
+      background: #f9f9f9;
+      max-width: 500px;
+    }
+    #chat-box {
+      height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 0.5em;
+      margin-bottom: 1em;
+      background: white;
+    }
+    #chat-form {
+      display: flex;
+    }
+    #chat-input {
+      flex: 1;
+      padding: 0.5em;
+    }
+    #chat-form button {
+      padding: 0.5em 1em;
+      margin-left: 0.5em;
+    }
+  </style>
 </head>
 <body>
   <center>
@@ -31,8 +59,22 @@
       <p>Various music and shows.</p>
 
       <!-- Direct audio stream using fixed LocalTunnel subdomain -->
-      <div data-type="newStreamPlayer" data-publicToken="5bed5e51-46ad-4efc-bab9-acee02b92554" data-theme="light" data-color="003366" data-channelId="9fff0b65-69ab-425f-898e-465ce1b3d615" data-rendered="false" class="cstrEmbed"><a href="https://www.caster.fm">Shoutcast Hosting</a> <a href="https://www.caster.fm">Stream Hosting</a> <a href="https://www.caster.fm">Radio Server Hosting</a></div><script src="//cdn.cloud.caster.fm//widgets/embed.js"></script>
-      
+      <div data-type="newStreamPlayer" data-publicToken="5bed5e51-46ad-4efc-bab9-acee02b92554" data-theme="light" data-color="003366" data-channelId="9fff0b65-69ab-425f-898e-465ce1b3d615" data-rendered="false" class="cstrEmbed">
+        <a href="https://www.caster.fm">Shoutcast Hosting</a> 
+        <a href="https://www.caster.fm">Stream Hosting</a> 
+        <a href="https://www.caster.fm">Radio Server Hosting</a>
+      </div>
+      <script src="//cdn.cloud.caster.fm//widgets/embed.js"></script>
+    </section>
+
+    <!-- 🔹 Chat Section -->
+    <section class="chat">
+      <h2>Live Chat</h2>
+      <div id="chat-box"></div>
+      <form id="chat-form">
+        <input type="text" id="chat-input" placeholder="Type a message..." required/>
+        <button type="submit">Send</button>
+      </form>
     </section>
   </main>
 
@@ -43,7 +85,75 @@
   <script>
     // Set current year in footer
     document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
 
+    // ---- Chat JS ----
+    const chatBox = document.getElementById("chat-box");
+    const chatForm = document.getElementById("chat-form");
+    const chatInput = document.getElementById("chat-input");
+
+    function getCookie(name) {
+      const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+      return match ? decodeURIComponent(match[2]) : null;
+    }
+    function setCookie(name, value, days) {
+      let expires = "";
+      if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days*24*60*60*1000));
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/";
+    }
+
+    async function ensureIdentity() {
+      let username = getCookie("civradio_user");
+      let passed = getCookie("civradio_passed");
+
+      if (!username || !passed) {
+        username = prompt("Choose a username:") || ("Guest" + Math.floor(Math.random()*1000));
+
+        const a = Math.floor(Math.random()*10) + 1;
+        const b = Math.floor(Math.random()*10) + 1;
+        const answer = prompt(`Captcha: What is ${a} + ${b}?`);
+        if (parseInt(answer) !== a + b) {
+          alert("Wrong captcha. Reload to try again.");
+          chatForm.style.display = "none";
+          return;
+        }
+        setCookie("civradio_user", username, 30);
+        setCookie("civradio_passed", "yes", 30);
+      }
+    }
+
+    async function loadMessages() {
+      const res = await fetch("https://civradio-chat.yourdomain.workers.dev/messages");
+      const messages = await res.json();
+      chatBox.innerHTML = "";
+      messages.forEach(msg => {
+        const p = document.createElement("p");
+        p.innerHTML = `<b>${msg.user}:</b> ${msg.text}`;
+        chatBox.appendChild(p);
+      });
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    chatForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const text = chatInput.value.trim();
+      if (!text) return;
+      const user = getCookie("civradio_user") || "Guest";
+      await fetch("https://civradio-chat.yourdomain.workers.dev/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user, text }),
+      });
+      chatInput.value = "";
+      loadMessages();
+    });
+
+    ensureIdentity();
+    setInterval(loadMessages, 2000);
+    loadMessages();
+  </script>
 </body>
 </html>
