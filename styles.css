@@ -57,10 +57,10 @@ nav a:hover {
 }
 
 .container {
-  max-width: 960px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 1em;
-  flex: 1;
+  flex: 0;
 }
 
 .footer {
