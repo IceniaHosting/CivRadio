@@ -126,7 +126,7 @@
     }
 
     async function loadMessages() {
-      const res = await fetch("chatradio.yeovil3dprints.workers.dev/messages");
+      const res = await fetch("https://chatradio.yeovil3dprints.workers.dev/messages");
       const messages = await res.json();
       chatBox.innerHTML = "";
       messages.forEach(msg => {
@@ -142,7 +142,7 @@
       const text = chatInput.value.trim();
       if (!text) return;
       const user = getCookie("civradio_user") || "Guest";
-      await fetch("chatradio.yeovil3dprints.workers.dev/send", {
+      await fetch("https://chatradio.yeovil3dprints.workers.dev/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user, text }),
